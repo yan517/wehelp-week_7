@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="uft-8" />
+        <title>歡迎來到我的個人網站</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    </head>
+    <body>
+        <div class="text-center">
+            <div style="background-color: #062c4b; color: white; font-size: 30px;">歡迎光臨，這是會員頁</div><br><br>
+            <p><span id="name">{{ name }}</span>，歡迎登入系統</p>
+            <a href="./signout">登出系統</a><br><br>
+            <div style="border: solid 1px;"></div><br>
+            <p>查詢會員姓名</p>
+            <input id="userInput" type="text">
+            <button id="search">查詢</button>
+            <p id="nameDisplay"></p><br>
+            <div style="border: solid 1px;"></div><br>
+            <p>更新我的姓名</p>
+            <input id="newUsername" type="text" placeholder="輸入新的姓名">
+            <button onclick="editUsername()">更新</button>
+            <p id="editSuccess"></p><br>
+            <div style="border: solid 1px;"></div><br>            
+            <p>快來留言吧!</p>
+            <form action="./message" method="POST">
+                <label>肉容</label>
+                <input type="text" name="comment">
+                <button>送出</button>
+            </form><br>
+            <div style="border: solid 1px;"></div><br><br>
+            {% for data in datum %}
+                <diV>{{data[0]}} : {{data[1]}}</diV>
+            {% endfor %}
+        </div>
+    <script>
+        let btn = document.getElementById('search');
+        const getName = (username) => fetch('../api/member?username='+username).then((response)=>response.json());
+        btn.addEventListener('click', async()=>{
+            let username = document.getElementById('userInput').value;
+            let result = await getName(username);
+            if (result.data)
+                document.getElementById('nameDisplay').innerHTML = result.data['name'] +" (" + result.data['username'] +")";
+            else 
+                document.getElementById('nameDisplay').innerHTML = "無此會員"
+        });
+
+        async function editUsername(){
+            let newName  = document.getElementById('newUsername').value;
+            await fetch('/api/member', {
+                method:'PATCH',
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({"name":newName})
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data["ok"]){
+                    document.getElementById('editSuccess').innerHTML = "更新成功";
+                    document.getElementById('name').innerHTML = newName;
+                }else{
+                    document.getElementById('editSuccess').innerHTML = "";
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+            document.getElementById('newUsername').value = "";
+        }
+        
+    </script>    
+    </body>
+</html>
