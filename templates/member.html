@@ -33,19 +33,19 @@
             {% endfor %}
         </div>
     <script>
-        let btn = document.getElementById('search');
+        let btn = document.querySelector('#search');
         const getName = (username) => fetch('../api/member?username='+username).then((response)=>response.json());
         btn.addEventListener('click', async()=>{
-            let username = document.getElementById('userInput').value;
+            let username = document.querySelector('#userInput').value;
             let result = await getName(username);
             if (result.data)
-                document.getElementById('nameDisplay').innerHTML = result.data['name'] +" (" + result.data['username'] +")";
+                document.querySelector('#nameDisplay').innerHTML = result.data['name'] +" (" + result.data['username'] +")";
             else 
-                document.getElementById('nameDisplay').innerHTML = "無此會員"
+                document.querySelector('#nameDisplay').innerHTML = "無此會員"
         });
 
         async function editUsername(){
-            let newName  = document.getElementById('newUsername').value;
+            let newName  = document.querySelector('#newUsername').value;
             await fetch('/api/member', {
                 method:'PATCH',
                 headers:{
@@ -56,16 +56,16 @@
             .then((response) => response.json())
             .then((data) => {
                 if (data["ok"]){
-                    document.getElementById('editSuccess').innerHTML = "更新成功";
-                    document.getElementById('name').innerHTML = newName;
+                    document.querySelector('#editSuccess').innerHTML = "更新成功";
+                    document.querySelector('#name').innerHTML = newName;
                 }else{
-                    document.getElementById('editSuccess').innerHTML = "";
+                    document.querySelector('#editSuccess').innerHTML = "";
                 }
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
-            document.getElementById('newUsername').value = "";
+            document.querySelector('#newUsername').value = "";
         }
         
     </script>    
